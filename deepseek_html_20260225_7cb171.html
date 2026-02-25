@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hadith → Exact TypeScript (full format)</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: #eef2f7; margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 1rem; }
+        .card { background: white; border-radius: 2rem; box-shadow: 0 30px 50px -20px #1f3a4b; max-width: 950px; width: 100%; padding: 2.2rem; }
+        h1 { font-size: 2.2rem; font-weight: 650; margin: 0 0 .2rem; color: #0c3349; display: flex; gap: 10px; align-items: center; }
+        .sub { background: #dceafa; border-radius: 2rem; padding: 1rem 2rem; margin-bottom: 2rem; border-left: 8px solid #1d6da5; font-weight: 500; }
+        .flex-row { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-bottom: 1.2rem; }
+        .field { flex: 1 1 200px; }
+        .field label { font-weight: 600; font-size: .8rem; text-transform: uppercase; color: #1e5a80; display: block; margin-bottom: 0.2rem; }
+        .field input, .field textarea { width: 100%; padding: 0.8rem 1.2rem; border: 2px solid #b9d2e9; border-radius: 2rem; font-size: 1rem; background: #f9fcff; }
+        .field input:focus { border-color: #2273aa; outline: none; box-shadow: 0 0 0 3px #2273aa40; }
+        .upload-block { background: #ecf5fe; border-radius: 2.5rem; padding: 2rem; text-align: center; border: 3px dashed #90b9db; margin: 1.8rem 0; }
+        .upload-block label { background: #1b5e8c; color: white; font-weight: 600; padding: 1rem 2.8rem; border-radius: 3rem; cursor: pointer; display: inline-block; box-shadow: 0 6px 18px #1b5e8c; transition: 0.2s; }
+        .upload-block label:hover { background: #0b4363; transform: scale(1.02); }
+        .upload-block input { display: none; }
+        .file-status { margin-top: 1rem; color: #1d577b; font-weight: 500; }
+        .gen-btn { background: #154c6b; border: none; color: white; font-size: 1.4rem; font-weight: 700; padding: 1.2rem 2rem; border-radius: 4rem; width: 100%; cursor: pointer; box-shadow: 0 12px 28px -12px #0b2c40; transition: 0.2s; margin: 1.8rem 0 1rem; }
+        .gen-btn:hover { background: #0b344b; transform: scale(1.01); }
+        .gen-btn:disabled { opacity: 0.4; pointer-events: none; }
+        .result-panel { background: #d7e8f5; border-radius: 2rem; padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; margin: 1.2rem 0; }
+        .result-panel a { background: #103f5c; padding: 0.8rem 2rem; border-radius: 3rem; color: white; text-decoration: none; font-weight: 600; }
+        .footnote { background: #ecf3fa; border-radius: 2rem; padding: 1.2rem 2rem; font-size: 0.9rem; color: #204b68; margin-top: 2rem; border: 1px solid #bfd9ef; }
+        hr { border: 1px solid #c7daec; margin: 2rem 0 1rem; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>📘 Hadith → exact TypeScript (final format)</h1>
+    <div class="sub">Book + hadiths · chapter on change · full sharh (4 languages) · objection with id/objection/answer</div>
+
+    <!-- parameters -->
+    <div class="flex-row">
+        <div class="field"><label>🔖 ID prefix</label> <input type="text" id="prefix" value="h_b1_"></div>
+        <div class="field"><label>📘 Book ID</label> <input type="text" id="bookId" value="b_b1"></div>
+        <div class="field"><label>📚 Collection ID</label> <input type="text" id="collectionId" value="bukhari"></div>
+    </div>
+    <div class="flex-row">
+        <div class="field"><label>🔢 Book number</label> <input type="number" id="bookNumber" value="1" min="1"></div>
+        <div class="field"><label>⏺️ From hadith</label> <input type="number" id="rangeStart" value="1" min="1"></div>
+        <div class="field"><label>⏹️ To hadith</label> <input type="number" id="rangeEnd" value="7" min="1"></div>
+    </div>
+
+    <!-- custom book fields (description + title) -->
+    <div class="flex-row">
+        <div class="field" style="flex:2"><label>📖 Book description</label> <input type="text" id="bookDescription" value="The beginning of revelation to the Messenger of Allah."></div>
+    </div>
+    <div class="flex-row">
+        <div class="field"><label>🏷️ English title</label> <input type="text" id="titleEn" value="Revelation"></div>
+        <div class="field"><label>🏷️ Urdu title</label> <input type="text" id="titleUr" value="بدء الوحى"></div>
+        <div class="field"><label>🏷️ Roman Urdu</label> <input type="text" id="titleRo" value="Kitab Bad'ul Wahi"></div>
+        <div class="field"><label>🏷️ Hindi title</label> <input type="text" id="titleHi" value="वही"></div>
+    </div>
+
+    <!-- JSON upload -->
+    <div class="upload-block">
+        <label for="jsonFile">📂 Choose JSON (hadith array)</label>
+        <input type="file" id="jsonFile" accept="application/json">
+        <div class="file-status" id="fileStatus">No file selected</div>
+    </div>
+
+    <button class="gen-btn" id="generateBtn" disabled>⚡ GENERATE & DOWNLOAD .TS</button>
+    <div id="downloadPanel"></div>
+
+    <hr>
+    <div class="footnote">
+        ⚠️ <strong>escaping</strong> : backslash (\) → \\ , backtick (`) → \` , apostrophe (') → \' .<br>
+        • narrator cleaned (remove "Narrated " and ":") • chapter only if chapterId changes • first hadith gets full objection (with id, objection, answer) • sharh array exactly 8 entries (4 languages × 2)
+    </div>
+</div>
+
+<script>
+(function() {
+    // DOM elements
+    const prefixInp = document.getElementById('prefix');
+    const bookIdInp = document.getElementById('bookId');
+    const collectionIdInp = document.getElementById('collectionId');
+    const bookNumberInp = document.getElementById('bookNumber');
+    const rangeStartInp = document.getElementById('rangeStart');
+    const rangeEndInp = document.getElementById('rangeEnd');
+    const bookDescInp = document.getElementById('bookDescription');
+    const titleEnInp = document.getElementById('titleEn');
+    const titleUrInp = document.getElementById('titleUr');
+    const titleRoInp = document.getElementById('titleRo');
+    const titleHiInp = document.getElementById('titleHi');
+    const jsonFileInp = document.getElementById('jsonFile');
+    const fileStatus = document.getElementById('fileStatus');
+    const generateBtn = document.getElementById('generateBtn');
+    const downloadPanel = document.getElementById('downloadPanel');
+
+    // Language enum (mirror)
+    const Language = { ENGLISH: 'en', URDU: 'ur', ROMAN_URDU: 'roman-urdu', HINDI: 'hi', ARABIC: 'ar' };
+
+    // Hardcoded sharh array – exactly 8 items (4 languages × 2)
+    const SHARH_FULL = [
+        // Sharh 1 (AR)
+        { lang: Language.ARABIC, content: 'coming soon', scholar: 'ابن حجر العسقلاني', author: 'Ibn Hajar al-Asqalani', bookName: 'Fath al-Bari', arabicBookName: 'فتح الباري' },
+        { lang: Language.ENGLISH, content: 'coming soon', scholar: 'Ibn Hajar al-Asqalani', author: 'Ibn Hajar al-Asqalani', bookName: 'Fath al-Bari', arabicBookName: 'فتح الباري' },
+        { lang: Language.URDU, content: 'coming soon', scholar: 'ابن حجر عسقلانی', author: 'Ibn Hajar al-Asqalani', bookName: 'Fath al-Bari', arabicBookName: 'فتح الباري' },
+        { lang: Language.HINDI, content: 'coming soon', scholar: 'इब्न हज्र अल-अस्कलानी', author: 'Ibn Hajar al-Asqalani', bookName: 'Fath al-Bari', arabicBookName: 'फ़त अल-बारी' },
+        // Sharh 2 (duplicate pattern)
+        { lang: Language.ARABIC, content: 'coming soon', scholar: 'ابن حجر العسقلاني', author: 'Ibn Hajar al-Asqalani', bookName: 'Fath al-Bari', arabicBookName: 'فتح الباري' },
+        { lang: Language.ENGLISH, content: 'coming soon', scholar: 'Ibn Hajar al-Asqalani', author: 'Ibn Hajar al-Asqalani', bookName: 'Fath al-Bari', arabicBookName: 'فتح الباري' },
+        { lang: Language.URDU, content: 'coming soon', scholar: 'ابن حجر عسقلانی', author: 'Ibn Hajar al-Asqalani', bookName: 'Fath al-Bari', arabicBookName: 'فتح الباري' },
+        { lang: Language.HINDI, content: 'coming soon', scholar: 'इब्न हज्र अल-अस्कलानी', author: 'Ibn Hajar al-Asqalani', bookName: 'Fath al-Bari', arabicBookName: 'फ़त अल-बारी' }
+    ];
+
+    // Default objection object (exactly as example: with id, objection, answer, references[])
+    const DEFAULT_OBJECTION = {
+        id: 'obj_b1_1',   // will adjust prefix based on bookId? we keep as example, but can be dynamic if needed
+        objection: {
+            [Language.ENGLISH]: "Why did Imam Bukhari start the book of 'Revelation' with a Hadith about 'Intentions'?",
+            [Language.ARABIC]: "لماذا بدأ الإمام البخاري كتاب 'الوحي' بحديث عن 'النيات'؟",
+            [Language.URDU]: "امام بخاری نے 'وحی' کی کتاب کا آغاز 'نیت' والی حدیث سے کیوں کیا؟",
+            [Language.HINDI]: "इमाम बुखारी ने 'वही' (रहस्योद्घाटन) की किताब की शुरुआत 'नीयत' वाली हदीस से क्यों की?"
+        },
+        answer: {
+            [Language.ENGLISH]: "Scholars explain that Revelation is the foundation of Sharia, and Intention is the foundation of Action. Imam Bukhari signals that just as the Prophet (ﷺ) received revelation to guide humanity, the seeker of knowledge must rectify their intention to receive that guidance properly.",
+            [Language.ARABIC]: "يوضح العلماء أن الوحي هو أساس الشريعة، والنية هي أساس العمل. يشير الإمام البخاري إلى أنه كما تلقى النبي (ﷺ) الوحي لهداية البشرية، يجب على طالب العلم تصحيح نيته لتلقي تلك الهداية بشكل صحيح.",
+            [Language.URDU]: "علماء بیان کرتے ہیں کہ وحی شریعت کی بنیاد ہے اور نیت عمل کی بنیاد ہے۔ امام بخاری یہ اشارہ دیتے ہیں کہ جس طرح نبی کریم (ﷺ) پر انسانیت کی رہنمائی کے لیے وحی نازل ہوئی، اسی طرح علم کے متلاشی کو چاہیے کہ وہ اس رہنمائی کو حاصل کرنے کے لیے اپنی نیت درست کرے۔",
+            [Language.HINDI]: "विद्वान बताते हैं कि 'वही' शरिया की नींव है और 'नीयत' कर्म की नींव है। इमाम बुखारी संकेत देते हैं कि जैसे पैगंबर (ﷺ) को मानवता का मार्गदर्शन करने के लिए 'वही' प्राप्त हुई, वैसे ही ज्ञान चाहने वाले को उस मार्गदर्शन को ठीक से प्राप्त करने के लिए अपनी नीयत को शुद्ध करना चाहिए।"
+        },
+        references: []
+    };
+
+    let rawHadiths = null;
+
+    jsonFileInp.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) { fileStatus.innerText = 'No file selected'; rawHadiths = null; generateBtn.disabled = true; return; }
+        fileStatus.innerText = `📄 ${file.name}`;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            try {
+                let parsed = JSON.parse(ev.target.result);
+                if (!Array.isArray(parsed)) {
+                    if (parsed.hadiths && Array.isArray(parsed.hadiths)) parsed = parsed.hadiths;
+                    else if (parsed.data && Array.isArray(parsed.data)) parsed = parsed.data;
+                    else throw new Error('Top-level array not found');
+                }
+                rawHadiths = parsed;
+                generateBtn.disabled = false;
+                fileStatus.innerText += ` — ${rawHadiths.length} hadiths loaded`;
+            } catch (err) {
+                alert('JSON error: ' + err.message);
+                rawHadiths = null;
+                generateBtn.disabled = true;
+            }
+        };
+        reader.readAsText(file);
+    });
+
+    // escape: \ -> \\, ` -> \`, ' -> \'
+    function escapeAll(str) {
+        if (typeof str !== 'string') return '';
+        return str.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/'/g, "\\'");
+    }
+
+    // clean narrator: remove "Narrated " (case‑ins.) and all ':'
+    function cleanNarrator(raw) {
+        if (typeof raw !== 'string') return '';
+        let s = raw.replace(/^Narrated\s+/i, '');
+        s = s.replace(/:/g, '');
+        return s.trim();
+    }
+
+    generateBtn.addEventListener('click', function() {
+        if (!rawHadiths) { alert('Load JSON first'); return; }
+
+        // read fields
+        const prefix = prefixInp.value.trim() || 'h_b1_';
+        const bookId = bookIdInp.value.trim() || 'b_b1';
+        const collectionId = collectionIdInp.value.trim() || 'bukhari';
+        const bookNumber = parseInt(bookNumberInp.value, 10);
+        const rangeStart = parseInt(rangeStartInp.value, 10);
+        const rangeEnd = parseInt(rangeEndInp.value, 10);
+        if (isNaN(bookNumber) || bookNumber < 1 || isNaN(rangeStart) || isNaN(rangeEnd) || rangeStart > rangeEnd) {
+            alert('Invalid parameters'); return;
+        }
+
+        // book metadata
+        const bookDesc = escapeAll(bookDescInp.value.trim());
+        const titleEn = escapeAll(titleEnInp.value.trim());
+        const titleUr = escapeAll(titleUrInp.value.trim());
+        const titleRo = escapeAll(titleRoInp.value.trim());
+        const titleHi = escapeAll(titleHiInp.value.trim());
+
+        // filter & sort by idInBook
+        const filtered = rawHadiths
+            .map(h => ({ ...h, idNum: parseInt(h.idInBook, 10) }))
+            .filter(h => !isNaN(h.idNum) && h.idNum >= rangeStart && h.idNum <= rangeEnd)
+            .sort((a,b) => a.idNum - b.idNum);
+
+        if (filtered.length === 0) { alert('No hadith in range'); return; }
+
+        const hadithCount = filtered.length;
+        const hadithRangeStr = `${rangeStart}-${rangeEnd}`;
+        const bookVar = `book${bookNumber}`;
+        const hadithArrayVar = `${bookVar}Hadiths`;
+
+        // start building lines
+        let lines = [];
+        lines.push(`import { Language, Book, Hadith } from '../../../../types';`);
+        lines.push(``);
+        lines.push(`export const ${bookVar}: Book = { `);
+        lines.push(`  id: '${bookId}', `);
+        lines.push(`  collectionId: '${collectionId}', `);
+        lines.push(`  number: ${bookNumber}, `);
+        lines.push(`  hadithCount: ${hadithCount}, `);
+        lines.push(`  hadithRange: '${hadithRangeStr}', `);
+        lines.push(`  description: '${bookDesc}', `);
+        lines.push(`  title: { `);
+        lines.push(`    [Language.ENGLISH]: '${titleEn}',`);
+        lines.push(`    [Language.URDU]: '${titleUr}',`);
+        lines.push(`    [Language.ROMAN_URDU]: '${titleRo}',`);
+        lines.push(`    [Language.HINDI]: '${titleHi}'`);
+        lines.push(`  }`);
+        lines.push(`};`);
+        lines.push(``);
+        lines.push(`export const ${hadithArrayVar}: Hadith[] = [`);
+
+        let previousChapterId = null;
+        let isFirstHadith = true;
+        let idCounter = 1;   // for h_b1_1 ...
+
+        for (const h of filtered) {
+            const hadithNumber = h.idNum.toString();
+
+            // narrator
+            const narratorRaw = h.narrator || '';
+            const narratorClean = cleanNarrator(narratorRaw);
+            const narratorEsc = escapeAll(narratorClean);
+
+            const grade = h.grade || 'Sahih';
+
+            // arabic text
+            let arabicRaw = h.arabicText || h.text || h.arabic || '';
+            if (typeof arabicRaw !== 'string') arabicRaw = String(arabicRaw);
+            const arabicEsc = escapeAll(arabicRaw);
+
+            // translations
+            const trans = h.translations || h.translation || {};
+            const englishRaw = trans.en || trans.english || trans[Language.ENGLISH] || '';
+            const urduRaw = trans.ur || trans.urdu || trans[Language.URDU] || '';
+            const romanUrduRaw = trans.roman_urdu || trans[Language.ROMAN_URDU] || 'coming soon...';
+            const hindiRaw = trans.hi || trans.hindi || trans[Language.HINDI] || 'coming soon...';
+
+            const englishEsc = escapeAll(englishRaw);
+            const urduEsc = escapeAll(urduRaw);
+            const romanEsc = escapeAll(romanUrduRaw);
+            const hindiEsc = escapeAll(hindiRaw);
+
+            // chapter logic
+            const currentChapterId = h.chapterId || h.chapter_id || h.chapter?.id || '';
+            const chapterIdStr = currentChapterId.toString().trim();
+            const includeChapter = (chapterIdStr !== '' && chapterIdStr !== previousChapterId);
+            previousChapterId = chapterIdStr; // update
+
+            // auto‑increment id
+            const autoId = `${prefix}${idCounter++}`;
+
+            lines.push(`  {`);
+            lines.push(`    id: '${autoId}',`);
+            lines.push(`    hadithNumber: '${hadithNumber}',`);
+            lines.push(`    bookId: '${bookId}',`);
+            lines.push(`    collectionId: '${collectionId}',`);
+
+            if (includeChapter && chapterIdStr !== '') {
+                // For chapter we need id, bookId, arabicTitle, englishTitle, description (all languages)
+                // We'll take from JSON if present, else fallback to empty.
+                const ch = h.chapter || {};
+                const chId = ch.id || chapterIdStr || '';
+                const chArabicTitle = ch.arabicTitle || '';
+                const chEnglishTitle = ch.englishTitle || '';
+                const chDescEn = ch.description?.[Language.ENGLISH] || ch.description?.en || '';
+                const chDescAr = ch.description?.[Language.ARABIC] || ch.description?.ar || '';
+                const chDescUr = ch.description?.[Language.URDU] || ch.description?.ur || '';
+
+                lines.push(`    chapter: {`);
+                lines.push(`      id: '${escapeAll(chId)}',`);
+                lines.push(`      bookId: '${bookId}',`);
+                lines.push(`      arabicTitle: '${escapeAll(chArabicTitle)}',`);
+                lines.push(`      englishTitle: '${escapeAll(chEnglishTitle)}',`);
+                lines.push(`      description: {`);
+                lines.push(`        [Language.ENGLISH]: '${escapeAll(chDescEn)}',`);
+                lines.push(`        [Language.ARABIC]: '${escapeAll(chDescAr)}',`);
+                lines.push(`        [Language.URDU]: '${escapeAll(chDescUr)}'`);
+                lines.push(`      }`);
+                lines.push(`    },`);
+            }
+
+            lines.push(`    narrator: '${narratorEsc}',`);
+            lines.push(`    grade: '${grade}',`);
+            lines.push(`    arabicText: \`${arabicEsc}\`,`);
+            lines.push(`    translations: {`);
+            lines.push(`      [Language.ENGLISH]: \`${englishEsc}\`,`);
+            lines.push(`      [Language.URDU]: '${urduEsc}',`);
+            lines.push(`      [Language.ROMAN_URDU]: '${romanEsc}',`);
+            lines.push(`      [Language.HINDI]: '${hindiEsc}'`);
+            lines.push(`    },`);
+
+            // sharh – full 8 items
+            lines.push(`    sharh: [`);
+            for (let i = 0; i < SHARH_FULL.length; i++) {
+                const s = SHARH_FULL[i];
+                let item = `      {\n        lang: Language.${Object.keys(Language).find(k => Language[k] === s.lang) || 'ENGLISH'},\n        content: '${s.content}',\n        scholar: '${s.scholar}',\n        author: '${s.author}',\n        bookName: '${s.bookName}',\n        arabicBookName: '${s.arabicBookName}'\n      }`;
+                lines.push(item + (i < SHARH_FULL.length-1 ? ',' : ''));
+            }
+            lines.push(`    ],`);
+
+            // objections
+            if (isFirstHadith) {
+                // Build the exact objection with dynamic id based on bookId? using 'obj_b1_1' example – we can keep as DEFAULT_OBJECTION but escape strings.
+                const obj = DEFAULT_OBJECTION;
+                // optionally set id prefix according to bookId? we keep "obj_b1_1" as example, but could make dynamic.
+                const objId = `obj_${bookId}_1`; // use bookId to match pattern obj_b1_1
+                const objectionObj = {
+                    id: objId,
+                    objection: {
+                        [Language.ENGLISH]: obj.objection[Language.ENGLISH],
+                        [Language.ARABIC]: obj.objection[Language.ARABIC],
+                        [Language.URDU]: obj.objection[Language.URDU],
+                        [Language.HINDI]: obj.objection[Language.HINDI]
+                    },
+                    answer: {
+                        [Language.ENGLISH]: obj.answer[Language.ENGLISH],
+                        [Language.ARABIC]: obj.answer[Language.ARABIC],
+                        [Language.URDU]: obj.answer[Language.URDU],
+                        [Language.HINDI]: obj.answer[Language.HINDI]
+                    },
+                    references: obj.references
+                };
+                // stringify with 2 spaces indent, then post-process to add [Language.XXX] keys correctly.
+                // simpler: manually write objection object to preserve [Language.ENGLISH] syntax
+                lines.push(`    objections: [`);
+                lines.push(`      {`);
+                lines.push(`        id: '${escapeAll(objId)}',`);
+                lines.push(`        objection: {`);
+                lines.push(`          [Language.ENGLISH]: '${escapeAll(obj.objection[Language.ENGLISH])}',`);
+                lines.push(`          [Language.ARABIC]: '${escapeAll(obj.objection[Language.ARABIC])}',`);
+                lines.push(`          [Language.URDU]: '${escapeAll(obj.objection[Language.URDU])}',`);
+                lines.push(`          [Language.HINDI]: '${escapeAll(obj.objection[Language.HINDI])}'`);
+                lines.push(`        },`);
+                lines.push(`        answer: {`);
+                lines.push(`          [Language.ENGLISH]: '${escapeAll(obj.answer[Language.ENGLISH])}',`);
+                lines.push(`          [Language.ARABIC]: '${escapeAll(obj.answer[Language.ARABIC])}',`);
+                lines.push(`          [Language.URDU]: '${escapeAll(obj.answer[Language.URDU])}',`);
+                lines.push(`          [Language.HINDI]: '${escapeAll(obj.answer[Language.HINDI])}'`);
+                lines.push(`        },`);
+                lines.push(`        references: []`);
+                lines.push(`      }`);
+                lines.push(`    ],`);
+                isFirstHadith = false;
+            } else {
+                lines.push(`    objections: [],`);
+            }
+
+            lines.push(`  },`);
+        }
+
+        lines.push(`];`);
+
+        const tsCode = lines.join('\n');
+
+        // download
+        const fileName = `book${bookNumber}.ts`;
+        const blob = new Blob([tsCode], { type: 'text/typescript' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        link.textContent = `⬇️ Download ${fileName}`;
+        link.style.background = '#1b6b9c';
+        link.style.padding = '0.9rem 2rem';
+        link.style.borderRadius = '3rem';
+        link.style.color = 'white';
+        link.style.fontWeight = '600';
+        link.style.textDecoration = 'none';
+        link.style.display = 'inline-block';
+
+        downloadPanel.innerHTML = '';
+        const resultDiv = document.createElement('div');
+        resultDiv.className = 'result-panel';
+        resultDiv.innerHTML = `<span style="font-weight:600;">✅ ${fileName} ready</span>`;
+        resultDiv.appendChild(link);
+        downloadPanel.appendChild(resultDiv);
+
+        link.addEventListener('click', () => setTimeout(() => URL.revokeObjectURL(url), 200));
+    });
+})();
+</script>
+</body>
+</html>
