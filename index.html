@@ -3,80 +3,279 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hadith → Exact TypeScript</title>
+    <title>Hadith ✦ TypeScript forge</title>
     <style>
-        * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        body { background: #eef2f7; margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 1rem; }
-        .card { background: white; border-radius: 2rem; box-shadow: 0 30px 50px -20px #1f3a4b; max-width: 950px; width: 100%; padding: 2.2rem; }
-        h1 { font-size: 2.2rem; font-weight: 650; margin: 0 0 .2rem; color: #0c3349; display: flex; gap: 10px; align-items: center; }
-        .sub { background: #dceafa; border-radius: 2rem; padding: 1rem 2rem; margin-bottom: 2rem; border-left: 8px solid #1d6da5; font-weight: 500; }
-        .flex-row { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-bottom: 1.2rem; }
-        .field { flex: 1 1 200px; }
-        .field label { font-weight: 600; font-size: .8rem; text-transform: uppercase; color: #1e5a80; display: block; margin-bottom: 0.2rem; }
-        .field input, .field textarea { width: 100%; padding: 0.8rem 1.2rem; border: 2px solid #b9d2e9; border-radius: 2rem; font-size: 1rem; background: #f9fcff; }
-        .field input:focus { border-color: #2273aa; outline: none; box-shadow: 0 0 0 3px #2273aa40; }
-        .upload-block { background: #ecf5fe; border-radius: 2.5rem; padding: 2rem; text-align: center; border: 3px dashed #90b9db; margin: 1.8rem 0; }
-        .upload-block label { background: #1b5e8c; color: white; font-weight: 600; padding: 1rem 2.8rem; border-radius: 3rem; cursor: pointer; display: inline-block; box-shadow: 0 6px 18px #1b5e8c; transition: 0.2s; }
-        .upload-block label:hover { background: #0b4363; transform: scale(1.02); }
-        .upload-block input { display: none; }
-        .file-status { margin-top: 1rem; color: #1d577b; font-weight: 500; }
-        .gen-btn { background: #154c6b; border: none; color: white; font-size: 1.4rem; font-weight: 700; padding: 1.2rem 2rem; border-radius: 4rem; width: 100%; cursor: pointer; box-shadow: 0 12px 28px -12px #0b2c40; transition: 0.2s; margin: 1.8rem 0 1rem; }
-        .gen-btn:hover { background: #0b344b; transform: scale(1.01); }
-        .gen-btn:disabled { opacity: 0.4; pointer-events: none; }
-        .result-panel { background: #d7e8f5; border-radius: 2rem; padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; margin: 1.2rem 0; }
-        .result-panel a { background: #103f5c; padding: 0.8rem 2rem; border-radius: 3rem; color: white; text-decoration: none; font-weight: 600; }
-        .footnote { background: #ecf3fa; border-radius: 2rem; padding: 1.2rem 2rem; font-size: 0.9rem; color: #204b68; margin-top: 2rem; border: 1px solid #bfd9ef; }
-        hr { border: 1px solid #c7daec; margin: 2rem 0 1rem; }
+        /* modern minimal / neubrutalism soft */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f0f5fe 0%, #e9f0fa 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .glass-panel {
+            max-width: 1050px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 3rem;
+            box-shadow: 0 30px 60px rgba(18, 52, 77, 0.12), 0 10px 30px rgba(0, 30, 60, 0.1), inset 0 1px 2px rgba(255,255,255,0.6);
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #103f5c, #1b6d9c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            background: #ddeeffcc;
+            border-radius: 3rem;
+            padding: 0.9rem 2rem;
+            margin-bottom: 2.3rem;
+            font-weight: 500;
+            color: #10405e;
+            border: 1px solid #b9d9fc;
+            box-shadow: 0 4px 12px rgba(0,60,120,0.08);
+            font-size: 1rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .grid-3 {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .field {
+            flex: 1 1 200px;
+        }
+        .field label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #1d5980;
+            margin-bottom: 0.3rem;
+        }
+        .field input, .field textarea {
+            width: 100%;
+            background: white;
+            border: 2px solid #c7dfff;
+            border-radius: 2rem;
+            padding: 0.8rem 1.4rem;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .field input:focus, .field textarea:focus {
+            border-color: #1f78b4;
+            outline: none;
+            box-shadow: 0 8px 18px -12px #1f78b4, 0 0 0 3px rgba(31,120,180,0.15);
+        }
+
+        .title-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.2rem 0 1.8rem;
+            background: #e3f0fd70;
+            padding: 1.5rem;
+            border-radius: 2.5rem;
+            border: 1px solid #aad0f9;
+        }
+
+        .upload-area {
+            background: linear-gradient(120deg, #dcedff, #e8f2ff);
+            border-radius: 3rem;
+            padding: 2rem 2rem;
+            text-align: center;
+            border: 2.5px dashed #5588b1;
+            margin: 2rem 0 1.8rem;
+            transition: background 0.2s;
+        }
+        .upload-area:hover {
+            background: #d0e8ff;
+        }
+        .upload-btn {
+            background: #1f618d;
+            border: none;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 1rem 3rem;
+            border-radius: 4rem;
+            cursor: pointer;
+            box-shadow: 0 12px 28px -12px #1f618d, 0 4px 12px rgba(0,50,90,0.3);
+            transition: all 0.2s ease;
+            border: 1px solid #4797c9;
+            display: inline-block;
+        }
+        .upload-btn:hover {
+            background: #0d4a73;
+            transform: scale(1.02);
+            box-shadow: 0 18px 32px -12px #0d3b5a;
+        }
+        .file-status {
+            margin-top: 1rem;
+            font-weight: 500;
+            color: #154f73;
+        }
+
+        .generate-btn {
+            background: linear-gradient(145deg, #0e3b57, #1a5e88);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            padding: 1.3rem 2rem;
+            border-radius: 4rem;
+            width: 100%;
+            cursor: pointer;
+            box-shadow: 0 25px 35px -14px #0a3b57, 0 6px 14px rgba(0,80,130,0.4);
+            transition: 0.2s;
+            margin: 2.2rem 0 1.5rem;
+            letter-spacing: 0.5px;
+            border: 1px solid #9ac9f0;
+        }
+        .generate-btn:hover {
+            background: linear-gradient(145deg, #0c3147, #134d73);
+            transform: scale(1.01);
+            box-shadow: 0 28px 40px -14px #083045;
+        }
+        .generate-btn:disabled {
+            opacity: 0.4;
+            pointer-events: none;
+            filter: grayscale(0.6);
+        }
+
+        .result-modern {
+            background: #cdedffc0;
+            backdrop-filter: blur(8px);
+            border-radius: 3rem;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 1.5rem 0 0.5rem;
+            border: 1px solid white;
+            box-shadow: 0 8px 22px -10px #2f6590;
+        }
+        .result-modern span {
+            font-weight: 600;
+            color: #052136;
+            font-size: 1.2rem;
+        }
+        .download-link {
+            background: #103f5c;
+            padding: 0.8rem 2.2rem;
+            border-radius: 3rem;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            border: 1px solid #68b5f0;
+            transition: 0.2s;
+            box-shadow: 0 8px 18px -10px #022b40;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .download-link:hover {
+            background: #052d44;
+            transform: translateY(-2px);
+        }
+
+        .info-footer {
+            background: #cbe5fe;
+            border-radius: 2.5rem;
+            padding: 1.2rem 2rem;
+            font-size: 0.9rem;
+            color: #043753;
+            border: 1px solid #9cc3ec;
+            margin-top: 2.5rem;
+            box-shadow: inset 0 1px 5px rgba(255,255,255,0.8);
+        }
+
+        hr {
+            display: none;
+        }
+        /* small extras */
+        .badge {
+            background: #1c6891;
+            color: white;
+            border-radius: 4rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 0.8rem;
+        }
     </style>
 </head>
 <body>
-<div class="card">
-    <h1>📘 Hadith → exact TypeScript</h1>
-    <div class="sub">Book + hadiths · chapter on change · full sharh (4 languages) · objection with id/objection/answer</div>
+<div class="glass-panel">
+    <h1>
+        <span></span> Hadith → TypeScript
+        <span class="badge">v2 exact</span>
+    </h1>
 
-    <!-- parameters -->
-    <div class="flex-row">
-        <div class="field"><label>🔖 ID prefix</label> <input type="text" id="prefix" value="h_b1_"></div>
-        <div class="field"><label>📘 Book ID</label> <input type="text" id="bookId" value="b_b1"></div>
-        <div class="field"><label>📚 Collection ID</label> <input type="text" id="collectionId" value="bukhari"></div>
+    <div class="grid-3">
+        <div class="field"><label>ID </label> <input type="text" id="prefix" value="h_b1_"></div>
+        <div class="field"><label>Book ID</label> <input type="text" id="bookId" value="b_b1"></div>
+        <div class="field"><label>Collection ID</label> <input type="text" id="collectionId" value="bukhari"></div>
     </div>
-    <div class="flex-row">
-        <div class="field"><label>🔢 Book number</label> <input type="number" id="bookNumber" value="1" min="1"></div>
-        <div class="field"><label>⏺️ From hadith</label> <input type="number" id="rangeStart" value="1" min="1"></div>
-        <div class="field"><label>⏹️ To hadith</label> <input type="number" id="rangeEnd" value="7" min="1"></div>
-    </div>
-
-    <!-- custom book fields (description + title) -->
-    <div class="flex-row">
-        <div class="field" style="flex:2"><label>📖 Book description</label> <input type="text" id="bookDescription" value="The beginning of revelation to the Messenger of Allah."></div>
-    </div>
-    <div class="flex-row">
-        <div class="field"><label>🏷️ English title</label> <input type="text" id="titleEn" value="Revelation"></div>
-        <div class="field"><label>🏷️ Urdu title</label> <input type="text" id="titleUr" value="بدء الوحى"></div>
-        <div class="field"><label>🏷️ Roman Urdu</label> <input type="text" id="titleRo" value="Kitab Bad'ul Wahi"></div>
-        <div class="field"><label>🏷️ Hindi title</label> <input type="text" id="titleHi" value="वही"></div>
+    <div class="grid-3">
+        <div class="field"><label>Book number</label> <input type="number" id="bookNumber" value="1" min="1"></div>
+        <div class="field"><label>From hadith</label> <input type="number" id="rangeStart" value="1" min="1"></div>
+        <div class="field"><label>To hadith</label> <input type="number" id="rangeEnd" value="7" min="1"></div>
     </div>
 
-    <!-- JSON upload -->
-    <div class="upload-block">
-        <label for="jsonFile">📂 Choose JSON (hadith array)</label>
-        <input type="file" id="jsonFile" accept="application/json">
+    <!-- book description & titles (clean row) -->
+    <div style="margin: 1.2rem 0 0.5rem;"><label style="font-weight:600;">Book description</label> <input type="text" id="bookDescription" value="The beginning of revelation to the Messenger of Allah." style="width:100%;"></div>
+
+    <div class="title-row">
+        <div style="flex:1"><label>English title</label> <input type="text" id="titleEn" value="Revelation"></div>
+        <div style="flex:1"><label>Urdu title</label> <input type="text" id="titleUr" value="بدء الوحى"></div>
+        <div style="flex:1"><label>Roman Urdu</label> <input type="text" id="titleRo" value="Kitab Bad'ul Wahi"></div>
+        <div style="flex:1"><label>Hindi title</label> <input type="text" id="titleHi" value="वही"></div>
+    </div>
+
+    <!-- upload file -->
+    <div class="upload-area">
+        <label for="jsonFile" class="upload-btn">Choose JSON </label>
+        <input type="file" id="jsonFile" accept="application/json" style="display:none;">
         <div class="file-status" id="fileStatus">No file selected</div>
     </div>
 
-    <button class="gen-btn" id="generateBtn" disabled>⚡ GENERATE & DOWNLOAD .TS</button>
+    <button class="generate-btn" id="generateBtn" disabled>GENERATE .TS</button>
     <div id="downloadPanel"></div>
 
-    <hr>
-    <div class="footnote">
-        ⚠️ <strong>escaping</strong> : backslash (\) → \\ , backtick (`) → \` , apostrophe (') → \' .<br>
-        • narrator cleaned (remove "Narrated " and ":") • chapter only if chapterId changes • first hadith gets full objection (with id, objection, answer) • sharh array exactly 8 entries (4 languages × 2)
-    </div>
 </div>
 
 <script>
 (function() {
-    // DOM elements
+    // DOM
     const prefixInp = document.getElementById('prefix');
     const bookIdInp = document.getElementById('bookId');
     const collectionIdInp = document.getElementById('collectionId');
@@ -93,26 +292,21 @@
     const generateBtn = document.getElementById('generateBtn');
     const downloadPanel = document.getElementById('downloadPanel');
 
-    // Language enum (mirror)
     const Language = { ENGLISH: 'en', URDU: 'ur', ROMAN_URDU: 'roman-urdu', HINDI: 'hi', ARABIC: 'ar' };
 
-    // Hardcoded sharh array – exactly 8 items (4 languages × 2)
     const SHARH_FULL = [
-        // Sharh 1 (AR)
         { lang: Language.ARABIC, content: 'coming soon', scholar: 'ابن حجر العسقلاني', author: 'Ibn Hajar al-Asqalani', bookName: 'Fath al-Bari', arabicBookName: 'فتح الباري' },
         { lang: Language.ENGLISH, content: 'coming soon', scholar: 'Ibn Hajar al-Asqalani', author: 'Ibn Hajar al-Asqalani', bookName: 'Fath al-Bari', arabicBookName: 'فتح الباري' },
         { lang: Language.URDU, content: 'coming soon', scholar: 'ابن حجر عسقلانی', author: 'Ibn Hajar al-Asqalani', bookName: 'Fath al-Bari', arabicBookName: 'فتح الباري' },
         { lang: Language.HINDI, content: 'coming soon', scholar: 'इब्न हज्र अल-अस्कलानी', author: 'Ibn Hajar al-Asqalani', bookName: 'Fath al-Bari', arabicBookName: 'फ़त अल-बारी' },
-        // Sharh 2 (duplicate pattern)
         { lang: Language.ARABIC, content: 'coming soon', scholar: 'ابن حجر العسقلاني', author: 'Ibn Hajar al-Asqalani', bookName: 'Fath al-Bari', arabicBookName: 'فتح الباري' },
         { lang: Language.ENGLISH, content: 'coming soon', scholar: 'Ibn Hajar al-Asqalani', author: 'Ibn Hajar al-Asqalani', bookName: 'Fath al-Bari', arabicBookName: 'فتح الباري' },
         { lang: Language.URDU, content: 'coming soon', scholar: 'ابن حجر عسقلانی', author: 'Ibn Hajar al-Asqalani', bookName: 'Fath al-Bari', arabicBookName: 'فتح الباري' },
         { lang: Language.HINDI, content: 'coming soon', scholar: 'इब्न हज्र अल-अस्कलानी', author: 'Ibn Hajar al-Asqalani', bookName: 'Fath al-Bari', arabicBookName: 'फ़त अल-बारी' }
     ];
 
-    // Default objection object (exactly as example: with id, objection, answer, references[])
     const DEFAULT_OBJECTION = {
-        id: 'obj_b1_1',   // will adjust prefix based on bookId? we keep as example, but can be dynamic if needed
+        id: 'obj_b1_1',
         objection: {
             [Language.ENGLISH]: "Why did Imam Bukhari start the book of 'Revelation' with a Hadith about 'Intentions'?",
             [Language.ARABIC]: "لماذا بدأ الإمام البخاري كتاب 'الوحي' بحديث عن 'النيات'؟",
@@ -133,7 +327,7 @@
     jsonFileInp.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) { fileStatus.innerText = 'No file selected'; rawHadiths = null; generateBtn.disabled = true; return; }
-        fileStatus.innerText = `📄 ${file.name}`;
+        fileStatus.innerText = `📁 ${file.name}`;
         const reader = new FileReader();
         reader.onload = (ev) => {
             try {
@@ -155,13 +349,11 @@
         reader.readAsText(file);
     });
 
-    // escape: \ -> \\, ` -> \`, ' -> \'
     function escapeAll(str) {
         if (typeof str !== 'string') return '';
         return str.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/'/g, "\\'");
     }
 
-    // clean narrator: remove "Narrated " (case‑ins.) and all ':'
     function cleanNarrator(raw) {
         if (typeof raw !== 'string') return '';
         let s = raw.replace(/^Narrated\s+/i, '');
@@ -172,7 +364,6 @@
     generateBtn.addEventListener('click', function() {
         if (!rawHadiths) { alert('Load JSON first'); return; }
 
-        // read fields
         const prefix = prefixInp.value.trim() || 'h_b1_';
         const bookId = bookIdInp.value.trim() || 'b_b1';
         const collectionId = collectionIdInp.value.trim() || 'bukhari';
@@ -183,14 +374,12 @@
             alert('Invalid parameters'); return;
         }
 
-        // book metadata
         const bookDesc = escapeAll(bookDescInp.value.trim());
         const titleEn = escapeAll(titleEnInp.value.trim());
         const titleUr = escapeAll(titleUrInp.value.trim());
         const titleRo = escapeAll(titleRoInp.value.trim());
         const titleHi = escapeAll(titleHiInp.value.trim());
 
-        // filter & sort by idInBook
         const filtered = rawHadiths
             .map(h => ({ ...h, idNum: parseInt(h.idInBook, 10) }))
             .filter(h => !isNaN(h.idNum) && h.idNum >= rangeStart && h.idNum <= rangeEnd)
@@ -203,7 +392,6 @@
         const bookVar = `book${bookNumber}`;
         const hadithArrayVar = `${bookVar}Hadiths`;
 
-        // start building lines
         let lines = [];
         lines.push(`import { Language, Book, Hadith } from '../../../../types';`);
         lines.push(``);
@@ -226,24 +414,18 @@
 
         let previousChapterId = null;
         let isFirstHadith = true;
-        let idCounter = 1;   // for h_b1_1 ...
+        let idCounter = 1;
 
         for (const h of filtered) {
             const hadithNumber = h.idNum.toString();
-
-            // narrator
             const narratorRaw = h.narrator || '';
             const narratorClean = cleanNarrator(narratorRaw);
             const narratorEsc = escapeAll(narratorClean);
-
             const grade = h.grade || 'Sahih';
-
-            // arabic text
             let arabicRaw = h.arabicText || h.text || h.arabic || '';
             if (typeof arabicRaw !== 'string') arabicRaw = String(arabicRaw);
             const arabicEsc = escapeAll(arabicRaw);
 
-            // translations
             const trans = h.translations || h.translation || {};
             const englishRaw = trans.en || trans.english || trans[Language.ENGLISH] || '';
             const urduRaw = trans.ur || trans.urdu || trans[Language.URDU] || '';
@@ -255,13 +437,11 @@
             const romanEsc = escapeAll(romanUrduRaw);
             const hindiEsc = escapeAll(hindiRaw);
 
-            // chapter logic
             const currentChapterId = h.chapterId || h.chapter_id || h.chapter?.id || '';
             const chapterIdStr = currentChapterId.toString().trim();
             const includeChapter = (chapterIdStr !== '' && chapterIdStr !== previousChapterId);
-            previousChapterId = chapterIdStr; // update
+            previousChapterId = chapterIdStr;
 
-            // auto‑increment id
             const autoId = `${prefix}${idCounter++}`;
 
             lines.push(`  {`);
@@ -271,8 +451,6 @@
             lines.push(`    collectionId: '${collectionId}',`);
 
             if (includeChapter && chapterIdStr !== '') {
-                // For chapter we need id, bookId, arabicTitle, englishTitle, description (all languages)
-                // We'll take from JSON if present, else fallback to empty.
                 const ch = h.chapter || {};
                 const chId = ch.id || chapterIdStr || '';
                 const chArabicTitle = ch.arabicTitle || '';
@@ -304,53 +482,37 @@
             lines.push(`      [Language.HINDI]: '${hindiEsc}'`);
             lines.push(`    },`);
 
-            // sharh – full 8 items
             lines.push(`    sharh: [`);
             for (let i = 0; i < SHARH_FULL.length; i++) {
                 const s = SHARH_FULL[i];
-                let item = `      {\n        lang: Language.${Object.keys(Language).find(k => Language[k] === s.lang) || 'ENGLISH'},\n        content: '${s.content}',\n        scholar: '${s.scholar}',\n        author: '${s.author}',\n        bookName: '${s.bookName}',\n        arabicBookName: '${s.arabicBookName}'\n      }`;
-                lines.push(item + (i < SHARH_FULL.length-1 ? ',' : ''));
+                const langKey = Object.keys(Language).find(k => Language[k] === s.lang) || 'ENGLISH';
+                lines.push(`      {`);
+                lines.push(`        lang: Language.${langKey},`);
+                lines.push(`        content: '${s.content}',`);
+                lines.push(`        scholar: '${s.scholar}',`);
+                lines.push(`        author: '${s.author}',`);
+                lines.push(`        bookName: '${s.bookName}',`);
+                lines.push(`        arabicBookName: '${s.arabicBookName}'`);
+                lines.push(`      }${i < SHARH_FULL.length-1 ? ',' : ''}`);
             }
             lines.push(`    ],`);
 
-            // objections
             if (isFirstHadith) {
-                // Build the exact objection with dynamic id based on bookId? using 'obj_b1_1' example – we can keep as DEFAULT_OBJECTION but escape strings.
-                const obj = DEFAULT_OBJECTION;
-                // optionally set id prefix according to bookId? we keep "obj_b1_1" as example, but could make dynamic.
-                const objId = `obj_${bookId}_1`; // use bookId to match pattern obj_b1_1
-                const objectionObj = {
-                    id: objId,
-                    objection: {
-                        [Language.ENGLISH]: obj.objection[Language.ENGLISH],
-                        [Language.ARABIC]: obj.objection[Language.ARABIC],
-                        [Language.URDU]: obj.objection[Language.URDU],
-                        [Language.HINDI]: obj.objection[Language.HINDI]
-                    },
-                    answer: {
-                        [Language.ENGLISH]: obj.answer[Language.ENGLISH],
-                        [Language.ARABIC]: obj.answer[Language.ARABIC],
-                        [Language.URDU]: obj.answer[Language.URDU],
-                        [Language.HINDI]: obj.answer[Language.HINDI]
-                    },
-                    references: obj.references
-                };
-                // stringify with 2 spaces indent, then post-process to add [Language.XXX] keys correctly.
-                // simpler: manually write objection object to preserve [Language.ENGLISH] syntax
+                const objId = `obj_${bookId}_1`;
                 lines.push(`    objections: [`);
                 lines.push(`      {`);
                 lines.push(`        id: '${escapeAll(objId)}',`);
                 lines.push(`        objection: {`);
-                lines.push(`          [Language.ENGLISH]: '${escapeAll(obj.objection[Language.ENGLISH])}',`);
-                lines.push(`          [Language.ARABIC]: '${escapeAll(obj.objection[Language.ARABIC])}',`);
-                lines.push(`          [Language.URDU]: '${escapeAll(obj.objection[Language.URDU])}',`);
-                lines.push(`          [Language.HINDI]: '${escapeAll(obj.objection[Language.HINDI])}'`);
+                lines.push(`          [Language.ENGLISH]: '${escapeAll(DEFAULT_OBJECTION.objection[Language.ENGLISH])}',`);
+                lines.push(`          [Language.ARABIC]: '${escapeAll(DEFAULT_OBJECTION.objection[Language.ARABIC])}',`);
+                lines.push(`          [Language.URDU]: '${escapeAll(DEFAULT_OBJECTION.objection[Language.URDU])}',`);
+                lines.push(`          [Language.HINDI]: '${escapeAll(DEFAULT_OBJECTION.objection[Language.HINDI])}'`);
                 lines.push(`        },`);
                 lines.push(`        answer: {`);
-                lines.push(`          [Language.ENGLISH]: '${escapeAll(obj.answer[Language.ENGLISH])}',`);
-                lines.push(`          [Language.ARABIC]: '${escapeAll(obj.answer[Language.ARABIC])}',`);
-                lines.push(`          [Language.URDU]: '${escapeAll(obj.answer[Language.URDU])}',`);
-                lines.push(`          [Language.HINDI]: '${escapeAll(obj.answer[Language.HINDI])}'`);
+                lines.push(`          [Language.ENGLISH]: '${escapeAll(DEFAULT_OBJECTION.answer[Language.ENGLISH])}',`);
+                lines.push(`          [Language.ARABIC]: '${escapeAll(DEFAULT_OBJECTION.answer[Language.ARABIC])}',`);
+                lines.push(`          [Language.URDU]: '${escapeAll(DEFAULT_OBJECTION.answer[Language.URDU])}',`);
+                lines.push(`          [Language.HINDI]: '${escapeAll(DEFAULT_OBJECTION.answer[Language.HINDI])}'`);
                 lines.push(`        },`);
                 lines.push(`        references: []`);
                 lines.push(`      }`);
@@ -362,31 +524,22 @@
 
             lines.push(`  },`);
         }
-
         lines.push(`];`);
 
         const tsCode = lines.join('\n');
-
-        // download
         const fileName = `book${bookNumber}.ts`;
         const blob = new Blob([tsCode], { type: 'text/typescript' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
         link.download = fileName;
-        link.textContent = `⬇️ Download ${fileName}`;
-        link.style.background = '#1b6b9c';
-        link.style.padding = '0.9rem 2rem';
-        link.style.borderRadius = '3rem';
-        link.style.color = 'white';
-        link.style.fontWeight = '600';
-        link.style.textDecoration = 'none';
-        link.style.display = 'inline-block';
+        link.innerHTML = '⬇️ Download ' + fileName;
 
         downloadPanel.innerHTML = '';
         const resultDiv = document.createElement('div');
-        resultDiv.className = 'result-panel';
-        resultDiv.innerHTML = `<span style="font-weight:600;">✅ ${fileName} ready</span>`;
+        resultDiv.className = 'result-modern';
+        resultDiv.innerHTML = '<span>✅ ' + fileName + ' ready</span>';
+        link.className = 'download-link';
         resultDiv.appendChild(link);
         downloadPanel.appendChild(resultDiv);
 
