@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hadith → Exact TypeScript (full format)</title>
+    <title>Hadith → Exact TypeScript</title>
     <style>
         * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         body { background: #eef2f7; margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 1rem; }
@@ -31,7 +31,7 @@
 </head>
 <body>
 <div class="card">
-    <h1>📘 Hadith → exact TypeScript (final format)</h1>
+    <h1>📘 Hadith → exact TypeScript</h1>
     <div class="sub">Book + hadiths · chapter on change · full sharh (4 languages) · objection with id/objection/answer</div>
 
     <!-- parameters -->
